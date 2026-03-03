@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mobile Price Prediction</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Inter", "Segoe UI", sans-serif;
+        background: linear-gradient(135deg, #0f172a, #111827);
+        color: #e5e7eb;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #outerbox {
+        width: 480px;
+        background: rgba(17, 24, 39, 0.85);
+        backdrop-filter: blur(18px);
+        border-radius: 18px;
+        padding: 35px 40px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 6px;
+        font-size: 22px;
+        font-weight: 600;
+        color: #ffffff;
+        letter-spacing: 0.5px;
+      }
+
+      p {
+        text-align: center;
+        font-size: 13px;
+        margin-bottom: 24px;
+        color: #9ca3af;
+      }
+
+      .box-items {
+        margin-bottom: 15px;
+      }
+
+      label {
+        font-size: 12px;
+        font-weight: 500;
+        margin-bottom: 6px;
+        display: block;
+        color: #9ca3af;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid #2d3748;
+        background: #1f2937;
+        color: #f3f4f6;
+        font-size: 14px;
+        transition: all 0.25s ease;
+      }
+
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        background: #111827;
+      }
+
+      input::placeholder {
+        color: #6b7280;
+      }
+
+      #buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+      }
+
+      button {
+        width: 48%;
+        padding: 10px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.25s ease;
+      }
+
+      button[type="submit"] {
+        background: linear-gradient(135deg, #2563eb, #3b82f6);
+        border: none;
+        color: white;
+      }
+
+      button[type="submit"]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4);
+      }
+
+      button[type="reset"] {
+        background: #1f2937;
+        border: 1px solid #374151;
+        color: #d1d5db;
+      }
+
+      button[type="reset"]:hover {
+        background: #111827;
+      }
+
+      #pricePrediction {
+        margin-top: 25px;
+        padding: 16px;
+        border-radius: 14px;
+        background: rgba(59, 130, 246, 0.08);
+        border: 1px solid rgba(59, 130, 246, 0.25);
+        text-align: center;
+        font-size: 15px;
+        font-weight: 500;
+        color: #dbeafe;
+      }
+
+      #price {
+        color: #3b82f6;
+        font-size: 20px;
+        font-weight: 600;
+      }
+
+      /* Scrollbar (modern touch) */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #374151;
+        border-radius: 10px;
+      }
+      .row {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+      }
+
+      .col {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      .star-rating {
+        display: flex;
+        gap: 5px;
+        font-size: 20px;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .star-rating span {
+        color: #374151;
+        transition: all 0.2s ease;
+      }
+
+      .star-rating span.active {
+        color: #fbbf24;
+        text-shadow: 0 0 8px rgba(251, 191, 36, 0.6);
+      }
+
+      .star-rating span:hover {
+        transform: scale(1.15);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="outerbox">
+      <h1>Mobile Price Prediction</h1>
+      <p>Enter phone specifications</p>
+      <hr />
+      <form id="predictForm">
+        <div class="row">
+          <div class="col">
+            <label>Company:</label>
+            <select id="company" required>
+              <option value="">--Select Company--</option>
+            </select>
+          </div>
+
+          <div class="col">
+            <label>Os</label>
+            <select id="os" required>
+              <option value="">--Select OS--</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="box-items">
+          <label>Rating</label>
+
+          <div class="star-rating">
+            <input type="hidden" id="rating" required />
+
+            <span data-value="1">★</span>
+            <span data-value="2">★</span>
+            <span data-value="3">★</span>
+            <span data-value="4">★</span>
+            <span data-value="5">★</span>
+            <span data-value="6">★</span>
+            <span data-value="7">★</span>
+            <span data-value="8">★</span>
+            <span data-value="9">★</span>
+            <span data-value="10">★</span>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <label>Chipset</label>
+            <select id="chipset" required>
+              <option value="">--Select Chipset--</option>
+            </select>
+          </div>
+
+          <div class="col">
+            <label>Core Type</label>
+            <select id="core" required>
+              <option value="">--Select Core--</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="box-items">
+          <label>Ram Size:</label>
+          <input type="number" id="ram" min="0" max="24" step="1" required />
+        </div>
+
+        <div class="box-items">
+          <label>Clock ghz:</label>
+          <input type="number" id="clock" min="1" max="5" step="0.1" required />
+        </div>
+        <div class="row">
+          <div class="col">
+            <label>Display Type</label>
+            <select id="display_type" required>
+              <option value="">--Select Display Type--</option>
+            </select>
+          </div>
+          <div class="col">
+            <label>Network Type:</label>
+            <select id="network" required>
+              <option value="">--Select Network--</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="box-items">
+          <label>Display size</label>
+          <input
+            type="number"
+            id="display"
+            min="2"
+            max="10"
+            step="0.01"
+            required
+          />
+        </div>
+        <div class="row">
+          <div class="col">
+            <label>Resolution X (width)</label>
+            <input
+              type="number"
+              id="resolution_x"
+              min="200"
+              max="4000"
+              required
+            />
+          </div>
+
+          <div class="col">
+            <label>Resolution Y (height)</label>
+            <input
+              type="number"
+              id="resolution_y"
+              min="200"
+              max="5000"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="box-items">
+          <label>Rear Cameras</label>
+          <input
+            type="number"
+            id="rear_camera"
+            min="5"
+            max="200"
+            step="1"
+            required
+          />
+        </div>
+        <div class="row">
+          <div class="col">
+            <label>Battery (mAh)</label>
+            <input type="number" id="battery_mah" required />
+          </div>
+
+          <div class="col">
+            <label>NFC</label>
+            <select id="NFC">
+              <option value="1">Yes</option>
+              <option value="0">No</option>
+            </select>
+          </div>
+        </div>
+        <hr />
+        <div id="buttons">
+          <button type="button" id="clearBtn">Clear</button>
+          <button type="submit">Predict</button>
+        </div>
+      </form>
+
+      <div id="pricePrediction">
+        Predicted Price: ₹ <span id="price">--</span>
+      </div>
+    </div>
+
+    <script>
+      // clear button logic
+      document.getElementById("clearBtn").addEventListener("click", () => {
+        const box = document.getElementById("outerbox");
+
+        box.style.opacity = "0.6";
+        box.style.transition = "0.2s";
+
+        setTimeout(() => {
+          document.getElementById("predictForm").reset();
+          document
+            .querySelectorAll(".star-rating span")
+            .forEach((star) => star.classList.remove("active"));
+          document.getElementById("rating").value = "";
+          document.getElementById("price").innerText = "--";
+
+          box.style.opacity = "1";
+        }, 150);
+      });
+      //   loading options in select
+      async function loadOptions() {
+        const response = await fetch("/options");
+        const data = await response.json();
+        console.log(data);
+        function fillSelect(id, values) {
+          const select = document.getElementById(id);
+          values.forEach((val) => {
+            const option = document.createElement("option");
+            option.value = val;
+            option.textContent = val;
+            select.appendChild(option);
+          });
+        }
+
+        fillSelect("company", data.company_name);
+        fillSelect("os", data.os);
+        fillSelect("chipset", data.chipset);
+        fillSelect("core", data.core_type);
+        fillSelect("display_type", data.display_type);
+        fillSelect("network", data.network_type);
+      }
+
+      loadOptions();
+
+      // ⭐ Fixed Star Rating Logic
+      const stars = document.querySelectorAll(".star-rating span");
+      const ratingInput = document.getElementById("rating");
+
+      stars.forEach((star) => {
+        star.addEventListener("click", () => {
+          const value = Number(star.getAttribute("data-value")); // convert to number
+          ratingInput.value = value;
+
+          stars.forEach((s) => {
+            const starValue = Number(s.getAttribute("data-value")); // convert here too
+
+            if (starValue <= value) {
+              s.classList.add("active");
+            } else {
+              s.classList.remove("active");
+            }
+          });
+        });
+      });
+      stars.forEach((star) => {
+        star.addEventListener("mouseover", () => {
+          const value = Number(star.getAttribute("data-value"));
+
+          stars.forEach((s) => {
+            const starValue = Number(s.getAttribute("data-value"));
+            s.classList.toggle("active", starValue <= value);
+          });
+        });
+
+        star.addEventListener("mouseleave", () => {
+          const selected = Number(ratingInput.value || 0);
+          stars.forEach((s) => {
+            const starValue = Number(s.getAttribute("data-value"));
+            s.classList.toggle("active", starValue <= selected);
+          });
+        });
+      });
+      //   prediction price
+      document
+        .getElementById("predictForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const rating = parseFloat(document.getElementById("rating").value);
+          const ram = parseFloat(document.getElementById("ram").value);
+          const clock = parseFloat(document.getElementById("clock").value);
+          const battery = parseFloat(
+            document.getElementById("battery_mah").value,
+          );
+          const resolutionX = parseFloat(
+            document.getElementById("resolution_x").value,
+          );
+          const resolutionY = parseFloat(
+            document.getElementById("resolution_y").value,
+          );
+          const screenSize = parseFloat(
+            document.getElementById("display").value,
+          );
+
+          // ✅ Rating validation
+          if (!rating || rating < 0 || rating > 10) {
+            alert("Please select a rating");
+            return;
+          }
+
+          // ✅ Basic validations
+          if (ram < 1 || ram > 24) {
+            alert("RAM must be between 1GB and 24GB");
+            return;
+          }
+
+          if (clock < 1 || clock > 5) {
+            alert("Clock speed must be between 1 and 5 GHz");
+            return;
+          }
+
+          if (battery < 1000 || battery > 10000) {
+            alert("Battery must be between 1000 and 10000 mAh");
+            return;
+          }
+
+          const data = {
+            company_name: document.getElementById("company").value,
+            os: document.getElementById("os").value,
+            chipset: document.getElementById("chipset").value,
+            core_type: document.getElementById("core").value,
+            display_type: document.getElementById("display_type").value,
+            network_type: document.getElementById("network").value,
+
+            rating: rating,
+            ram: ram,
+            clock: clock,
+            rear_camera: parseFloat(
+              document.getElementById("rear_camera").value,
+            ),
+            battery_mah: battery,
+            NFC: parseInt(document.getElementById("NFC").value),
+
+            resolution_x: resolutionX,
+            resolution_y: resolutionY,
+            screen_size: screenSize, // ✅ IMPORTANT (backend expects this name)
+          };
+
+          try {
+            const response = await fetch("/predict", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+
+            if (result.error) {
+              document.getElementById("price").innerText = result.error;
+            } else {
+              document.getElementById("price").innerText = Number(
+                result.prediction,
+              ).toFixed(2);
+            }
+          } catch (error) {
+            document.getElementById("price").innerText = "Prediction failed";
+          }
+        });
+    </script>
+  </body>
+</html>
