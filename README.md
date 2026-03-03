@@ -14,35 +14,35 @@ Key highlights of the model:
 
 1) Price Filtering
 
-Removed extreme outliers in the price column (only considered prices ≤ 150,000).
+- Removed extreme outliers in the price column (only considered prices ≤ 150,000).
 
 2) Company Extraction
 
-Extracted company names from phone model names to create a new company column.
+- Extracted company names from phone model names to create a new company column.
 
 3) Rating Scaling
 
-Scaled ratings to a 0–10 range for consistency.
+- Scaled ratings to a 0–10 range for consistency.
 
 4) Feature Removal
 
-Dropped features with low correlation to price, high missing values, or non-essential attributes.
+- Dropped features with low correlation to price, high missing values, or non-essential attributes.
 
-Dropped remaining null values since their count was minimal.
+- Dropped remaining null values since their count was minimal.
 
-5)OS Categorization
+5) OS Categorization
 
-Categorized operating system into Android, iOS, and Other.
+- Categorized operating system into Android, iOS, and Other.
 
-6)Chipset Categorization
+6) Chipset Categorization
 
-Retained chipsets with more than 10 occurrences; all others labeled as Other.
+- Retained chipsets with more than 10 occurrences; all others labeled as Other.
 
 7) Camera and Display Processing
 
-Renamed camera columns for clarity.
+- Renamed camera columns for clarity.
 
-Split resolution into resx and resy.
+- Split resolution into resx and resy.
 
 ## Feature Engineering
 
